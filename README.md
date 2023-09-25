@@ -15,6 +15,3 @@ After the installation to test the integration to PyNWB, simply run a test_scrip
 \src\pynwb\tests
 
 ```
-
----
-This extension was created using [ndx-template](https://github.com/nwb-extensions/ndx-template).
