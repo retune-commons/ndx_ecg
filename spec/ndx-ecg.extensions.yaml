@@ -1,8 +1,135 @@
 groups:
-- neurodata_type_def: TetrodeSeries
-  neurodata_type_inc: ElectricalSeries
-  doc: An extension of ElectricalSeries to include the tetrode ID for each time series.
+- neurodata_type_def: CardiacSeries
+  neurodata_type_inc: TimeSeries
+  doc: A group to store standardized cardiac time-series, e.g., ECG and HeartRate,
+    including acquisitions, processed cardiac series or auxiliary analysis.
   attributes:
-  - name: trode_id
-    dtype: int32
-    doc: The tetrode ID.
+  - name: process_level
+    dtype: text
+    doc: Indicate whether the time-series is a raw acquisition or have already been
+      processed; If processed, then describe the details.
+    required: false
+  datasets:
+  - name: data
+    dtype: numeric
+    doc: Associated cardiac-series data. Note that in general, this data could be
+      a numerical array,the columns of which corresponding to the recording channels,
+      indexed similarly as the rows of the dynamic table passed for the channels argument.
+      Notice the difference between electrodes table and the recording channels.
+    attributes:
+    - name: unit
+      dtype: text
+      doc: Default measurement unit of the corresponding cardiac-series.
+    - name: conversion
+      dtype: float32
+      value: 1
+      doc: 'Global conversion factor for corresponding cardiac-series. See also channel_conversion.
+        finally, the stored data-set for each channel will be returned in default
+        unit using the scaling as: data-in-default-unit = data * conversion * channel_conversion.'
+  - name: channel_conversion
+    dtype: float32
+    doc: 'Conventional NWB channel-specific conversion factor. Default value would
+      be 1. See also conversion. Finally, the stored data-set for each channel will
+      be returned in default unit using the scaling as: data-in-default-unit = data
+      * conversion * channel_conversion.'
+    quantity: '?'
+    attributes:
+    - name: axis
+      dtype: int32
+      value: 1
+      doc: Zero-indexed axis of the data that the channel-specific conversion factor
+        corresponds to.
+  links:
+  - name: ECG_channels_group
+    target_type: ECGChannelsGroup
+    doc: Link to the ECGChannelsGroup as a reference for recording channels, recording
+      electrodes and the recording device.
+- neurodata_type_def: ECG
+  neurodata_type_inc: NWBDataInterface
+  default_name: ECG
+  doc: Specific data interface for ElectroCardioGram time-series (raw/processed).
+  attributes:
+  - name: processing
+    dtype: text
+    doc: Explain how the time-series is processed or whether it is a raw acquisition.
+    required: false
+  groups:
+  - neurodata_type_inc: CardiacSeries
+    doc: CardiacSeries object representing the ElectroCardioGram (ECG). Whether raw
+      or processed.
+    quantity: +
+- neurodata_type_def: HeartRate
+  neurodata_type_inc: NWBDataInterface
+  default_name: HeartRate
+  doc: Specific data interface for HeartRate.
+  attributes:
+  - name: processing
+    dtype: text
+    doc: Explain how the time-series is processed or whether it is a raw acquisition.
+    required: false
+  groups:
+  - neurodata_type_inc: CardiacSeries
+    doc: CardiacSeries object representing the HearRate (HR). Whether raw or processed.
+    quantity: +
+- neurodata_type_def: AuxiliaryAnalysis
+  neurodata_type_inc: NWBDataInterface
+  default_name: AuxiliaryAnalysis
+  doc: Specific data interface for whatever relevant auxiliary in-between analysis.
+  attributes:
+  - name: processing
+    dtype: text
+    doc: Explain how the analysis is processed.
+    required: false
+  groups:
+  - neurodata_type_inc: CardiacSeries
+    doc: CardiacSeries object representing the auxiliary analysis.
+    quantity: +
+- neurodata_type_def: ECGChannelsGroup
+  neurodata_type_inc: NWBContainer
+  doc: Information of all channels from which the corresponding CardiacSeries is generated.
+    Note that these channels can represent single recording electrodes or differential
+    recordings.
+  attributes:
+  - name: group_description
+    dtype: text
+    doc: Describe the recording channels for this specific experiment session.
+    required: false
+  datasets:
+  - name: data
+    neurodata_type_inc: DynamicTable
+    doc: This would be the dynamic table of the recording channels, also including
+      a reference to the electrodes.
+    attributes:
+    - name: description
+      dtype: text
+      doc: Describe the dynamic table representing the channels being recorded.
+  links:
+  - name: ECG_recording_device
+    target_type: ECGRecDevice
+    doc: Link to the ECGRecDevice used to record cardiac signals.
+- neurodata_type_def: ECGRecDevice
+  neurodata_type_inc: Device
+  doc: ECG recording device.
+  attributes:
+  - name: filtering
+    dtype: text
+    doc: Explain analogue frequency filtering of the ECG acquisition device, if any
+      is implemented.
+    required: false
+  - name: gain
+    dtype: text
+    doc: Explain the gain settings of the ECG acquisition device.
+    required: false
+  - name: offset
+    dtype: text
+    doc: Explain what the baseline of the ECG signal is set to.
+    required: false
+  - name: synchronization
+    dtype: text
+    doc: Explain the synchronization settings if the ECG recording device is separately
+      connected to another recording system.
+    required: false
+  links:
+  - name: endpoint_recording_device
+    target_type: Device
+    doc: endpoint recording device to which the ECG recording device is connected.

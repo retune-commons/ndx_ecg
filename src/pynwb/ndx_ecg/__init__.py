@@ -22,5 +22,10 @@ if not os.path.exists(ndx_ecg_specpath):
 load_namespaces(ndx_ecg_specpath)
 
 # TODO: import your classes here or define your class using get_class to make
-# them accessible at the package level
-TetrodeSeries = get_class('TetrodeSeries', 'ndx-ecg')
+# them accessible at the package levels
+CardiacSeries = get_class('CardiacSeries', 'ndx-ecg')
+ECG = get_class('ECG', 'ndx-ecg')
+HeartRate = get_class('HeartRate', 'ndx-ecg')
+AuxiliaryAnalysis = get_class('AuxiliaryAnalysis', 'ndx-ecg')
+ECGChannelsGroup = get_class('ECGChannelsGroup', 'ndx-ecg')
+ECGRecDevice = get_class('ECGRecDevice', 'ndx-ecg')
