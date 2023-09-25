@@ -4,13 +4,15 @@ This extension is developed to extend NWB data standards to incorporate ECG reco
 
 ## Installation
 simply navigate to the root directory and
-```pip install .
+```
+pip install .
 
 ```
 
 ## Test
 After the installation to test the integration to PyNWB, simply run a test_script provided in 
-```\src\pynwb\tests
+```
+\src\pynwb\tests
 
 ```
 
